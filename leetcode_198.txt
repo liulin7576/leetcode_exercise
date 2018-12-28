@@ -1,0 +1,26 @@
+思路：典型的DP问题，满足以下两个条件：1、求最优值；2、存在重叠子问题
+解决方案：可以先用递归暴力求解出答案，假设 Input: [2,7,9,3,1]，如果2不被选择，那么7就有机会；如果2被选择，
+那么将跳过7，从而9有机会，如此一来，问题的规模就缩小了。但是暴力递归有个问题：当数据规模增大的时候，
+时间复杂度过大，从而使用空间换时间的解决办法。也就是预先定义好一个数组visited，记录当前点是否被计算过。
+代码如下：
+
+class Solution {
+public:
+    int search(vector<int>& nums, vector<int>& visited, int idx)
+    {
+        if(idx >= nums.size())
+            return 0;
+        if(visited[idx] != -1)
+            return visited[idx];
+        visited[idx] = max(search(nums, visited, idx + 1), search(nums, visited, idx + 2) + nums[idx]);
+        return visited[idx];
+    }
+    
+    int rob(vector<int>& nums) {
+        vector<int> visited(nums.size(), -1);
+        return search(nums, visited, 0);
+    }
+};
+
+时间复杂度：O(n)
+空间复杂度：O(n)
