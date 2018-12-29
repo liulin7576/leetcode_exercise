@@ -1,0 +1,64 @@
+思路：问题求解的是集合的所有子集（假设不包含重复元素）。
+解决办法：对于集合的每一个元素，从数组下标idx=0开始直到idx=size-1，用string来记录每一步的情况：
+1、该nums数组中元素被选取；2、该nums数组元素不被选取，递归得到解决方案。
+
+实现代码：
+方案一：
+vector<vector<int>> res;
+class Solution {
+public:
+    void search(vector<int>& nums, int idx, string s)
+    {
+        if(idx >= nums.size())
+        {
+            vector<int> mid_res;
+            for(int i = 0; i < s.size(); i++)          
+                mid_res.push_back(s[i] - '0');
+            res.push_back(mid_res);
+            return;
+        }
+        string buff = s;
+        buff += (nums[idx]+'0');
+        search(nums, idx+1, buff);
+        search(nums, idx+1, s);
+    }
+    
+    vector<vector<int>> subsets(vector<int>& nums) {
+        res.clear();
+        search(nums, 0, "");
+        return res;
+    }
+};
+时间复杂度：O(2^n)
+空间复杂度：###
+
+方案二：
+vector<vector<int>> res;
+vector<int> visited(100, 0);
+class Solution {
+public:
+    void search(vector<int>& nums, int idx)
+    {
+        if(idx >= nums.size())
+        {
+            vector<int> mid_res;
+            for(int i = 0; i < nums.size(); i++) 
+                if(visited[i])   #判断被选取的数字
+                    mid_res.push_back(nums[i]);
+            res.push_back(mid_res);
+            return;
+        }
+        visited[idx] = 1;  #该数被选取
+        search(nums, idx+1);
+        visited[idx] = 0;   #重置为0，表示该数不被选取
+        search(nums, idx+1);
+    }
+    
+    vector<vector<int>> subsets(vector<int>& nums) {
+        res.clear();
+        search(nums, 0);
+        return res;
+    }
+};
+时间复杂度：O(2^n)
+空间复杂度：O(n)
