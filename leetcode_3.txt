@@ -1,0 +1,53 @@
+思路：
+题目是要求出给定字符串的最长子串，子串是要连续的；字符串包含128个ascll码，故可以加一个辅助空间的数组，从index=0从前遍历，若该元素未出现，做加一处理，否则子串结束，重置数组，并从
+index=1开始遍历，重复操作直到最后。
+
+实现代码：
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        vector<int> arr(128, 0);
+        int idx = 0, res = 0;
+        while(idx < s.size())
+        {
+            int count = 0, i = idx;
+            while(i < s.size() && arr[s[i]] == 0)
+            {
+                arr[s[i]] = 1;
+                count++;
+                i++;
+            }
+            res = max(count, res);
+            for(int i = 0; i < 128; i++)
+                arr[i] = 0;
+            idx++;
+        }
+        return res;
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)
+
+另外一种较巧妙的方法：设定一个start指针，从前遍历字符串，如下所示
+
+实现代码：
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        unordered_map<char, int> arr; //借助hash表存储
+        int start = 0, maxLen = 0;  //start为借助指针
+        for(int i = 0; i < s.size(); i++)
+        {
+            if(arr.count(s[i]) != 0 && start <= arr[s[i]])
+					 //这里后面的判断条件是防止以下情况："tmmzuxt"
+                start = arr[s[i]] + 1; //重新索引指针的值
+            else
+                maxLen = max(maxLen, i - start + 1);
+            arr[s[i]] = i;
+        }
+        return maxLen;
+    }
+};
+
+时间复杂度：O(n)
+空间复杂度：O(1)

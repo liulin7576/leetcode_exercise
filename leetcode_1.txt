@@ -1,0 +1,28 @@
+思路：题目要求解的是数组中两个数相加等于某个target的对应的下标，若用传统的方法做，即
+两个for循环，时间复杂度为O(n^2)，无法通过性能测试。所以借用hash表的思想：
+从前到后遍历数组，若target-nums[i]在hash表中，那么表明已经查找到对应的下标，否则，将该值作为key，对应的下标作为value，存入hash表中，查找key只需O(1)的时间复杂度。
+
+实现代码：
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> record;
+        vector<int> arr(2);
+        for(int i = 0; i < nums.size(); i++)
+        {
+            int rest = target - nums[i];   
+            if(record.count(rest) != 0)
+            {
+                arr[0] = record[rest];
+                arr[1] = i;
+                break;
+            }
+            else
+                record[nums[i]] = i;
+        }
+        return arr;
+    }
+};
+
+时间复杂度：O(n)
+空间复杂度：O(1)

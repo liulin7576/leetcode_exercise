@@ -1,0 +1,57 @@
+思路：
+求反转数组的和，单节点存储的是0-9的数字，其实就从前加到结尾，但是有几个注意点：
+1、链表l1和链表l2的长度不同，所以需要判断谁先到达尾部；
+2、链表可能需要进位，存储进位标志flag
+3、当循环结束后，需要判断最后的进位标志，如[5],[5]相加的结果是[0, 1]
+
+
+实现代码：
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* head = new ListNode(0);
+        ListNode* cur = head;
+        bool flag = 0;
+        int value;
+        while(l1 || l2)
+        {
+            if(l1 && l2)
+                value = l1->val + l2->val + flag;
+            else if(l1 && !l2)
+                value = l1->val + flag;
+            else
+                 value = l2->val + flag;
+            if(value > 9)
+            {
+                value -= 10;
+                flag = 1;
+            }
+            else
+                flag = 0;
+            ListNode* p =new ListNode(value);
+            cur->next = p;
+            cur = p;
+            if(l1)
+                l1 = l1->next;
+            if(l2)
+                l2 = l2->next;
+        }
+        if(flag)
+        {
+            ListNode* p =new ListNode(flag);
+            cur->next = p;  
+        }
+        return head->next;
+    }
+};
+
+时间复杂度： O(max(n, m))
+空间复杂度： O(1)

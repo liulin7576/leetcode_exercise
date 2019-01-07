@@ -1,0 +1,31 @@
+思路：
+求两个排序数组的中值，nums1和nums2不全为空，题目要求是O(log(m+n))的运行时间复杂度，但是使用O(m+n)的复杂度也能通过样例，即将两个数组merge，需要O(m+n)，然后查找只需要O(1)的时间，首先写出该实现代码；
+
+实现代码：
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> nums3(nums1.size() + nums2.size()); //创建一个包含m+n大小的数组
+        int i = 0, j = 0, index = 0; // i指向nums1，j指向nums2，index指向nums3
+        while(i < nums1.size() || j < nums2.size())
+        {
+            if(i < nums1.size() && j < nums2.size())
+            {
+                if(nums1[i] <= nums2[j])
+                    nums3[index++] = nums1[i++];
+                else
+                    nums3[index++] = nums2[j++];
+            }
+            else if(i >= nums1.size() && j < nums2.size())
+                nums3[index++] = nums2[j++];
+            else
+                nums3[index++] = nums1[i++];
+        }
+        int len_of_s3 = nums3.size();
+        return (len_of_s3 % 2 == 0) ? double(nums3[(len_of_s3-1)/2] + nums3[len_of_s3/2]) / 2 : 
+            nums3[(len_of_s3-1)/2];  //注意上面需要使用double类型来计算，否则会损失精度
+    }
+};
+时间复杂度： O(m+n)
+空间复杂度： O(m+n)
+O(log(m+n))的解法，后续补上...
