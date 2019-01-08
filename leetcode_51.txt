@@ -1,0 +1,63 @@
+思路：
+该题目是一个N皇后问题，规则是行、列、斜线不允许有两个皇后，否则会引起攻击；对于该问题，设置4个辅助数组，分别
+记录行、列、正斜线、反斜线是否被使用过，利用循环遍历所有的行，某一行被访问过后将行、正斜线、反斜线数组都设置为1，
+为什么不用记录列是否被访问过呢？因为列是判断条件，也就是每次函数调用列都增加1，所以列不会重复，递归调用基就是
+列是否为N；
+其中有一点需要注意：
+1、判断正斜线和反斜线，如何写出该表达式：以正斜线为例，如在访问（2， 0）,那么对应的（1， 1）、（0， 2）都不能取了，
+从该数组可以看出规律：row+column=fix_number,反斜线同理，不过要注意负数情形，所以加上（n-1），具体代码如下：
+
+
+实现代码：
+vector<int> row(100, -1);  //行记录
+vector<int> column(100, -1);   //记录有可能是最终的Q
+vector<int> pos(100, -1);    //正斜线
+vector<int> neg(100, -1);    //反斜线
+class Solution {
+public:
+    void search(vector<vector<string>> &res, int n, int idx_column)
+    {
+        if(idx_column >= n)    //递归基
+        {
+            vector<string> buff;
+            for(int i = 0; i < n; i++)
+            {
+                string s = "";
+                for(int j = 0; j < n; j++)
+                {
+                    if(column[i] == j)
+                        s += 'Q';
+                    else
+                        s += '.';    
+                }
+                buff.push_back(s);
+            }
+            res.push_back(buff);
+            return;
+        }
+        
+        for(int i = 0; i < n; i++)
+        {
+            if(row[i] == -1 && pos[i+idx_column] == -1 && neg[i-idx_column+n-1] == -1)  //判断该格子是否有被访问过？
+            {
+                row[i] = 1;        //置1
+                pos[i+idx_column] = 1;
+                neg[i-idx_column+n-1] = 1;
+                column[i] = idx_column;      
+                search(res, n, idx_column+1);    //访问下一列
+                row[i] = -1;      //分别重新置-1，表示没有被访问
+                pos[i+idx_column] = -1;
+                neg[i-idx_column+n-1] = -1;
+            }
+        }
+    }
+    
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        search(res, n, 0);
+        return res;
+    }
+};
+
+时间复杂度：O(n^n)
+空间复杂度：O(1)

@@ -1,0 +1,42 @@
+思路：
+这个题目和leetcode51基本一样，只需要将返回值变一下，传个结果的引用就行了；
+
+实现代码：
+vector<int> row(100, -1);
+vector<int> column(100, -1);
+vector<int> pos(100, -1);
+vector<int> neg(100, -1);
+class Solution {
+public:
+    void search(int &res, int n, int idx_column)
+    {
+        if(idx_column >= n)
+        {
+            res += 1;
+            return;
+        }
+        for(int i = 0; i < n; i++)
+        {
+            if(row[i] == -1 && pos[i+idx_column] == -1 && neg[i-idx_column+n-1] == -1)
+            {
+                row[i] = 1;
+                pos[i+idx_column] = 1;
+                neg[i-idx_column+n-1] = 1;
+                column[i] = idx_column;
+                search(res, n, idx_column+1);
+                row[i] = -1;
+                pos[i+idx_column] = -1;
+                neg[i-idx_column+n-1] = -1;
+            }
+        }
+    }
+    
+    int totalNQueens(int n) {
+        int res = 0;
+        search(res, n, 0);
+        return res;
+    }
+};
+
+时间复杂度：O(n^n)
+空间复杂度：O(1)

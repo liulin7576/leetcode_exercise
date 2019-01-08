@@ -1,0 +1,54 @@
+思路：
+这个题目是给定一个二维数组，求岛屿的个数，例如：
+Input:
+11110
+11010
+11000
+00000
+
+Output: 1
+解决方法：可以定义一个visited数组，用来记录数组中'1'的节点是否被访问过，如果访问过，那么将其置为1，否则遍历该节点
+周围4个节点，直至标记完数组中所有的'1‘的节点；
+
+
+实现代码：
+vector<vector<int>> visited;  //visited记录节点是否被访问过
+class Solution {
+public:
+    void search(vector<vector<char>>& grid, int m, int n, int row, int column)
+    {
+        if(row >= m || column >= n || row < 0 || column < 0 || visited[row][column] != -1 || grid[row][column] == '0')
+            return;   //这里的条件是递归基，注意row、column要有限判断，否则会出现数组下标溢出
+        visited[row][column] = 1;     //满足上述条件，将该节点记为1
+        search(grid, m, n, row+1, column);     //下面是4种条件
+        search(grid, m, n, row-1, column);
+        search(grid, m, n, row, column+1);
+        search(grid, m, n, row, column-1);
+    }
+    
+    int numIslands(vector<vector<char>>& grid) {
+        int m = grid.size();
+        if(m == 0)   //边界条件判断
+            return 0;
+        int n = grid[0].size();
+        if(n == 0)   //边界条件判断
+            return 0;
+        visited.assign(m, vector<int>(n, -1));   //初始化visited数组
+        int res = 0;  //记录最终的结果
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                if(grid[i][j] == '1' && visited[i][j] == -1)   //条件
+                {
+                    search(grid, m, n, i, j);   //若找到一个1，则search函数查找和他相邻的，并用visited数组标记
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};
+
+时间复杂度：O(m*n)
+空间复杂度：O(m*n)
