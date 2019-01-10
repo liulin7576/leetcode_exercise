@@ -1,0 +1,40 @@
+思路：
+该题是给定一个不同数字的集合，返回对应的全排列，也就是一个DFS问题，核心是如何记录中间节点以及递归基的实现。
+
+实现代码：
+vector<vector<int>> res;  //记录最终结果的数组
+vector<int> arr;               //记录中间结果，也就是[1,2,3],[3,2,1]等等
+vector<int> visited;         //记录某节点是否被访问过
+class Solution {
+public:
+    void search(vector<int>& nums, int idx)
+    {
+        if(idx >= nums.size())   //边界条件是否达到
+        {
+            res.push_back(arr);
+            return;
+        }
+        for(int i = 0; i < nums.size(); i++)
+        {
+            if(visited[i] == -1)     //如果改点没有被访问过，那么存储该点到arr数组中，同时标记该点被访问了
+            {
+                arr[idx] = nums[i];  //这里是重点，用arr来记录每次DFS的结果，同时栈调用回来后，也会覆盖前面的记录结果
+                visited[i] = 1;       //标记被访问过
+                search(nums, idx+1);
+                visited[i] = -1;      //要将该点标记清空，因为是要求全排列
+            }
+        }
+    }
+    
+    vector<vector<int>> permute(vector<int>& nums) {
+        if(nums.size() == 0)
+            return res;
+        res.clear();       
+        visited.assign(nums.size(), -1);
+        arr.assign(nums.size(), -1);
+        search(nums, 0);     //调用
+        return res;
+    }
+};
+时间复杂度：O(n!)
+空间复杂度：O(n)
