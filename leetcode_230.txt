@@ -1,0 +1,63 @@
+思路：
+给定一颗二叉搜索树，求第k个最小的元素；
+因为是二叉搜索树，所以中序遍历就能得到一个有序数组，然后返回nums[k-1]即可；
+
+实现代码：
+一、递归版本
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void search(vector<int>& nums, TreeNode* root)
+    {
+        if(!root)
+            return;
+        search(nums, root->left);
+        nums.push_back(root->val);
+        search(nums, root->right);
+    }
+    
+    int kthSmallest(TreeNode* root, int k) {
+        if(!root)
+            return 0;
+        vector<int> nums;
+        search(nums, root);
+        return nums[k-1];
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(n)
+
+非递归版本：
+class Solution {
+public:  
+    int kthSmallest(TreeNode* root, int k) {
+        if(!root)
+            return 0;
+        vector<int> nums;
+        TreeNode* ptr = root;
+        stack<TreeNode*> s;   //用栈来模拟上述的递归过程
+        while(!s.empty() || ptr != NULL)
+        {  
+            while(ptr != NULL)    //一直到左子树最下面
+            {
+                s.push(ptr);
+                ptr = ptr->left;
+            }
+            ptr = s.top();
+            s.pop();
+            nums.push_back(ptr->val);
+            ptr = ptr->right;           
+        }
+        return nums[k-1];
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(n)

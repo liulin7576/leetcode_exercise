@@ -1,0 +1,51 @@
+思路：由前序遍历和中序遍历还原二叉树；
+解决办法：例如
+preorder = [3,9,20,15,7]
+inorder = [9,3,15,20,7]
+那么前序遍历的第一个节点（如果有的话）就是根节点，然后从中序遍历找到对应的这个节点在中序遍历中的位置，
+记录下这个位置，然后递归构建左子树、右子树就可以需用四个指针分别指向前序、中序递归过程中的首尾节点，
+注意一些小细节就可以了；
+
+
+实现代码：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* search(vector<int>& preorder, vector<int>& inorder, int pre_left, int pre_right,\
+                    int in_left, int in_right)
+    {
+        if(pre_left == pre_right)   //我这里采用的是若只剩下一个元素，那么下标是是[2,2]的形式，而不是下标是[2,3]的形式
+        {
+            TreeNode* p = new TreeNode(preorder[pre_left]);
+            return p;
+        }
+        if(pre_left > pre_right)     //表明不存在元素，返回NULL
+            return NULL;
+        int pre_first = preorder[pre_left];  //提取出当前的根节点
+        TreeNode* root = new TreeNode(pre_first);
+        int count_left = 0;          //记录当前根节点中下一次递归的左子树和右子树元素个数
+        for(int i = in_left; i < inorder.size();  i++)    //记住这里的i要从中序遍历的in_left开始遍历
+        {
+            if(inorder[i] == pre_first)
+                break;
+            count_left++;
+        }
+        root->left = search(preorder, inorder, pre_left+1, pre_left+count_left, in_left, in_left+count_left);  //递归就好
+        root->right = search(preorder, inorder, pre_left+count_left+1, pre_right,in_left+count_left+1, in_right);
+        return root;
+    }
+    
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return search(preorder, inorder, 0, preorder.size()-1, 0, inorder.size()-1);
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)

@@ -1,0 +1,69 @@
+思路：
+这个题目是给定一个非空字符串s和一系列的非空字符串数组，判断非空字符串数组能否组成非空字符串；
+例如：
+Input: s = "leetcode", wordDict = ["leet", "code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+重点：字典树的使用
+
+实现代码：
+struct TrieNode   //构造字典树节点
+{
+    TrieNode* child[26];    //因为题目考查的字符最多有26个英文数字
+    bool isWord;
+    TrieNode()          //构造函数的初始化
+    {
+        isWord = false;
+        memset(child, NULL, sizeof(child));   //分配空间
+    }
+};
+void insert(TrieNode* r, string s)   //字典树的插入操作
+{
+    for(int i = 0; i < s.size(); i++)    
+    {
+        int id = s[i] - 'a';
+        if(r->child[id] == NULL)    //如果当前的id存在了，直接赋值r=r->child，否则建立新节点
+            r->child[id] = new TrieNode(); 
+        r = r->child[id];
+    }
+    r->isWord = true;   //访问完毕后，表明最后一个节点对应的是一个单词
+}
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        TrieNode* root = new TrieNode();
+        for(int i = 0; i < wordDict.size(); i++)
+            insert(root, wordDict[i]);   //插入字典树当中
+        vector<bool> f(s.size()+1, false);    //这是重点，f数组的使用
+        f[0] = true;
+        /*
+	例如：
+	Input: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+	初始化f[0] = true，然后开始进入循环，遍历数组，直至能访问到第一个词的时候，也就是cat，然后令f[3]=1，
+	第二层循环并没有结束，然后下一次访问到cats的时候,f[4]=1，直至catsa不是单词，退出当前的第二层循环，
+	我们发现，下一次有可能从f[3]开始，也有可能从f[4]开始，因为之前的都是一个词；这就是核心的地方；
+       */  
+        for(int i = 0; i < s.size(); i++)
+        {
+            if(f[i])
+            {
+                TrieNode* r = root;
+                for(int j = i; j < s.size(); j++)
+                {
+                    int id = s[j] - 'a';
+                    if(r->child[id] != NULL)
+                    {
+                        r = r->child[id];
+                        if(r->isWord == true)
+                            f[j+1] = true;
+                    }
+                    else
+                        break;
+                }
+            }
+        }
+        return f[s.size()];
+    }
+};

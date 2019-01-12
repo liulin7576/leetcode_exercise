@@ -1,0 +1,39 @@
+思路：判断是否是对称树
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3    (这种就是对称树)，一定要注意边界条件的考量
+
+
+实现代码：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool search(TreeNode* left, TreeNode* right)
+    {
+        if((!left && right) || (left && !right))
+            return false;
+        if(!left && !right)
+            return true;
+        if(left->val != right->val)
+            return false;
+        return search(left->left, right->right) && search(left->right, right->left);
+    }
+    
+    bool isSymmetric(TreeNode* root) {
+        if(!root)
+            return true;
+        return search(root->left, root->right);
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)

@@ -1,0 +1,27 @@
+思路：判断二叉树是否一样，递归判断就行了；
+
+实现代码：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if((!p && q) || (p && !q))
+            return false;
+        if(!p && !q)
+            return true;
+        if(p->val == q->val)
+            return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+        else
+            return false;
+    }
+};
+时间复杂度: O(n)
+空间复杂度: O(1)
