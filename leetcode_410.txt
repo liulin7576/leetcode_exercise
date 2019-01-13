@@ -1,0 +1,66 @@
+思路：
+给定一个数组，以及m数字，求将非负数组分割成m个数组，且在m个数组中，先求其和，且要确保最大和最小化；
+for example
+Input:
+nums = [7,2,5,10,8]
+m = 2
+
+Output:
+18
+
+Explanation:
+There are four ways to split nums into two subarrays.
+The best way is to split it into [7,2,5] and [10,8],
+where the largest sum among the two subarrays is only 18
+
+关键思想：
+原题目是要先要用m来求出最大和最小化，换个思路：即先给定一个数字和，看从头往后遍历，该和能否将该数组
+分为m个部分，如果可以，说明该和可能较大，否则该和过小，这就是二分法的应用了；
+
+实现代码：
+class Solution {
+public:
+    bool guess(vector<int>& nums, int m, long mid)   //遍历数组，看mid能否将数组切分成m个部分
+    {
+        long sum = 0;
+        int mm = 0;
+        for(int i = 0; i < nums.size(); i++)
+        {
+            if(sum + nums[i] > mid)
+            {
+                mm++;
+                sum = nums[i];
+                if(nums[i] > mid)
+                    return false;
+            }
+            else
+                sum += nums[i];
+        }
+        return mm < m;   //这里要注意的是小于号，假设m=2，那么你只能有一个切分点啊。。。
+    }
+    
+    int splitArray(vector<int>& nums, int m) {
+        long r = 1;   
+
+//这里注意从1开始，防止这类情况[1,2147483646]，假设从0开始的话，那么和为2147483647，最后下面二分法的时候，
+//你会发现mid=2147483646,还不满足条件，而此时l=mid+1，将退出循环，最终ans=0了，但是+1就行了；
+
+        for(int i = 0; i < nums.size(); i++)
+            r += nums[i];   //求总和，因为再怎么也不会超过总和
+        long l = 0, ans = 0;
+        while(l < r)
+        {
+            long mid = (l + r) / 2 ;
+            if(guess(nums, m, mid))   //判断条件,这里的时间复杂度O(n)
+            {
+                ans = mid;
+                r = mid;    //这里要注意的一点是r=mid，而不能是r=mid-1；
+            }
+            else
+                l = mid + 1;
+        }
+        return ans;
+    }
+};
+时间复杂度：O(nlogN)   ###N是sum和
+空间复杂度：O(1)

@@ -1,0 +1,43 @@
+思路：
+求根号x，返回整数部分
+
+实现代码一：
+class Solution {
+public:
+    int mySqrt(int x) {      //牛顿迭代方法实现
+        double ans = x;   //初始化为x
+        while(ans*ans - x > 0.0001)   //当ans^2比x还大的时候，那么就需要继续迭代，因为最终根号取得值要较小才行
+            ans = (ans + x/ans) / 2;
+        return int(ans);
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)
+
+实现代码二: 二分法
+class Solution {
+public:
+    bool guess(long mid, int x)   //因为是根号（x），是单调递增的，所以可用二分法
+    {
+        return mid * mid <= x;   //判断是属于哪边
+    }
+    
+    int mySqrt(int x) {
+        long l = 0, r = x;
+        long ans = 0;     //这里用long是防止数值溢出，上面的mid * mid可能会溢出
+        while(l <= r)
+        {
+            long mid = (l + r) / 2; 
+            if(guess(mid, x))
+            {
+                ans = mid;   //ans记录最后的结果
+                l = mid + 1;
+            }
+            else
+                r = mid - 1;
+        }
+        return (int)ans;
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)
